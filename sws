@@ -83,6 +83,12 @@ generate () {
   dst="${2:?destination folder required}"
   # Load configuration file from the source folder
   { [ -r "${src}/_config" ] && . "${src}/_config"; } || die "configuration file not found"
+  # Load plugins if present
+  if [ -d "${src}/${plugins_folder=_plugins}" ]; then
+    for plugin in "${src}/${plugins_folder}/"*; do
+      . "$plugin"
+    done
+  fi
   # Load header and footer templates, if present
   [ -r "${src}/${head_tmpl=_header}" ] && source_template "${src}/${head_tmpl}" "header"
   [ -r "${src}/${foot_tmpl=_footer}" ] && source_template "${src}/${foot_tmpl}" "footer"
