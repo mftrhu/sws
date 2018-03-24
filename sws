@@ -26,7 +26,7 @@ do_hooks () {
   esac
   shift
   for hook in $hooks; do
-    "$hook" $*
+    "$hook" "$@"
   done
 }
 
@@ -53,10 +53,18 @@ END_OF_SCRIPT
 }
 
 ## Sws functions
+get_meta() {
+  { [ -z "$1" ] || [ ! -r "$1" ]; } && return
+  line="$(head "$1" -n "$2" | tail -n 1)"
+  case "$line" in
+    (%*) printf "%s" "$line" | sed 's|^% ||g' ;;
+  esac
+}
+
 sws_skip () {
-  case "$(basename "$1")" in
-    (_*) true ;;
-    (*)  false ;;
+  case "$1" in
+    (*/_*) true ;;
+    (*)    false ;;
   esac
 }
 
@@ -66,14 +74,20 @@ sws_page () {
   call_ifdef footer
 }
 
+sws_markup () {
+  grep -v -e '^%' "$1" | case "$1" in
+    (*.md)  "${MARKDOWN-lowdown}" ;;
+    (*.html) cat ;;
+  esac
+}
+
 sws_handle () {
-  name="$(echo "$1" | sed -e 's/^'"$src"'/'"$dst"'/g')"
+  name="$(echo "$1" | sed -e 's|^'"${src}"'|'"${dst}"'|g')"
   name="$(echo "$name" | change_ext md html)"
   mkdir -p "$(dirname "$name")"
   case "$1" in
-    (*.md)  "${MARKDOWN-lowdown}" "$1" | sws_page > "$name" ;;
-    (*.html) cat "$1" | sws_page > "$name" ;;
-    (*)      cp "$1" "$name" ;;
+    (*.md|*.html) sws_markup "$1" | sws_page > "$name" ;;
+    (*)           cp "$1" "$name" ;;
   esac
 }
 
@@ -94,7 +108,13 @@ generate () {
   [ -r "${src}/${foot_tmpl=_footer}" ] && source_template "${src}/${foot_tmpl}" "footer"
   # Go through the source folder
   do_hooks before
-  find "$src" -type f -iname "*" | while read -r path; do
+  # Do not touch the `set -f` unless you want to swear up a storm trying
+  # to find a way to make variable arguments to find co-exist with blobs
+  # that should be evaluated by it.
+  set -f
+  find "$src" ${find_opts_pre} -type f -iname "*" $find_opts_post | \
+  while read -r path; do
+    set +f
     sws_skip "${path}" && continue
     sws_handle "${path}"
     do_hooks during

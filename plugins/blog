@@ -1,0 +1,116 @@
+#!/bin/sh
+# sws plugin to create an archive page and add a list of older posts to
+# the front page of a blog  - replaces `[[OLDER]]` in `index.md` with
+# the list of last ten posts, and replaces `[[LAST]]` with the text of
+# the last post.
+#
+# Variables used:
+#   blog_show_older     How many items to replace `[[OLDER]]` with, last
+#                       post excluded (default: 10).
+
+add_hook before blog_prepare_index
+
+add_hook during blog_add_to_index
+
+add_hook after  blog_insert_index
+add_hook after  blog_create_archive
+add_hook after  blog_create_feed
+add_hook after  blog_clean_up_index
+
+
+blog_create_archive () {
+  page_title="Archive"
+  {
+    awk -f- -F "\t" "${blog_index}" <<'EOF'
+BEGIN { year=0; }
+{
+  if (substr($1, 1, 4) > year) {
+    if (year != 0) printf("</ul>\n");
+    year=substr($1, 1, 4);
+    printf("<h1>%s</h1>\n<ul>", year);
+  }
+  printf("<li><time>%s</time> <a href=\"%s\">%s</a></li>\n", $1, $2, $3);
+}
+END { printf("</ul>"); }
+EOF
+  } | sws_page > "${dst}/archive.html"
+}
+
+
+blog_create_feed () {
+  {
+    cat <<EOF
+<rss version="2.0">
+<channel>
+<title>${site_title}</title>
+<link>${site_address}</link>
+<description>${site_description}</description>
+EOF
+    awk -f- -v address="${site_address}" -F "\t" "${blog_index}" <<'EOF'
+{
+  printf("<item>\n<title>%s</title>\n", $3);
+  printf("<link>%s%s</link>\n", address, $2);
+  printf("<description></description>\n");
+  printf("</item>\n");
+}
+EOF
+    cat <<EOF
+</channel>
+</rss>
+EOF
+  } > "${dst}/feed.xml"
+}
+
+
+blog_prepare_index () {
+  blog_index="$(mktemp)" # Post metadata, tab-separated, one per line
+  post_text="$(mktemp)"  # Text of the last published post
+  formatted="$(mktemp)"  # Formatted HTML linking at the posts
+}
+
+blog_add_to_index () {
+  case "${path}" in
+    (*/index.md)  ;;
+    (*.md|*.html) printf "%s\t%s\t%s\t%s\n" "$(get_meta "${path}" 2)" \
+        "$(basename "$name")" "$(get_meta "${path}" 1)" \
+        "${path}" >> "${blog_index}" ;;
+  esac
+}
+
+blog_insert_index () {
+  printf "= inserting the index\n"
+  sort -r "${blog_index}" -o "${blog_index}"
+
+  # Get the text of the last post that was made
+  last_post="$(head -1 "${blog_index}")"
+  {
+    printf "<h1>%s</h1>\n" "$(echo "$last_post" | cut -f 3)"
+    printf "<p><time>%s</time> - <a href=\"%s\">Permalink</a></p>\n" \
+           "$(echo "$last_post" | cut -f 1)" \
+           "$(echo "$last_post" | cut -f 2)"
+    sws_markup "./$(echo "${last_post}" | cut -f 4)"
+  } > "${post_text}"
+
+  # Create the list of posts to be embedded in the index
+  awk -f- -F "\t" "${blog_index}" > "${formatted}" <<'EOF'
+{ printf("<li><time>%s</time> <a href=\"%s\">%s</a></li>\n", $1, $2, $3); }
+EOF
+
+  # Use ed to embed the list of posts and last post
+  ed -s "${dst}/index.html" <<EOF
+g/[[LAST]]/d\\
+.r !cat ${post_text}
+g/[[OLDER]]/d\\
+i\\
+<ul>\\
+.\\
+.r !tail -n +2 ${formatted} | head -n ${blog_show_older-10}\\
+a\\
+</ul>
+wq
+EOF
+}
+
+blog_clean_up_index () {
+  rm -f "${blog_index}" "${post_text}" "${formatted}"
+}
