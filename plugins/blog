@@ -71,8 +71,8 @@ blog_prepare_index () {
 blog_add_to_index () {
   case "${from}" in
     (*/index.md)  ;;
-    (*.md|*.html) printf "%s\t%s\t%s\t%s\n" "$(get_meta "${from}" 2)" \
-        "$(basename "$name")" "$(get_meta "${from}" 1)" \
+    (*.md|*.html) printf "%s\t%s\t%s\t%s\n" "$(get_meta "${from}" "D")" \
+        "$(basename "$name")" "$(get_meta "${from}" "T")" \
         "${from}" >> "${blog_index}" ;;
   esac
 }

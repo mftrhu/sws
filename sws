@@ -6,7 +6,8 @@
 
 ## Utility functions
 die () { printf "Error: %s\n" "$*"; exit 1; }
-call_ifdef () { type "$1" >/dev/null 2>&1 && "$@"; }
+is_defined () { type "$1" >/dev/null 2>&1; }
+call_ifdef () { is_defined "$1" && "$@"; }
 change_ext () { sed -e 's/\.'"$1"'$/\.'"$2"'/g'; }
 
 ## Hooks
@@ -55,10 +56,7 @@ END_OF_SCRIPT
 ## Sws functions
 get_meta() {
   { [ -z "$1" ] || [ ! -r "$1" ]; } && return
-  line="$(head "$1" -n "$2" | tail -n 1)"
-  case "$line" in
-    (%*) printf "%s" "$line" | sed 's|^% ||g' ;;
-  esac
+  grep "$1" -e "^%$2" | sed 's|^%[A-Z] ||g'
 }
 
 sws_skip () {
@@ -69,7 +67,7 @@ sws_skip () {
 }
 
 sws_page () {
-  [ -z "$page_title" ] && page_title="$(get_meta "$from" 1)"
+  [ -z "$page_title" ] && page_title="$(get_meta "$from" "T")"
   [ -n "$page_title" ] && title="$page_title" || title="$site_title"
   [ -n "$page_title" ] && joiner=" - "
   prefix="${basedir-.}$(dirname "/$from" | sed -e 's|/\w\+|/..|g' -e 's|^/..||g')"
