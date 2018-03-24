@@ -26,7 +26,7 @@ do_hooks () {
   esac
   shift
   for hook in $hooks; do
-    "$hook" "$@"
+    call_ifdef "$hook" "$@"
   done
 }
 
@@ -99,7 +99,8 @@ generate () {
   { [ -r "${src}/_config" ] && . "${src}/_config"; } || die "configuration file not found"
   # Load plugins if present
   if [ -d "${src}/${plugins_folder=_plugins}" ]; then
-    for plugin in "${src}/${plugins_folder}/"*; do
+    find "${src}/${plugins_folder}" -type f -iname "*" | sort | \
+    while read -r plugin; do
       . "$plugin"
     done
   fi
