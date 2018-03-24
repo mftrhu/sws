@@ -19,7 +19,7 @@ add_hook after  blog_clean_up_index
 
 
 blog_create_archive () {
-  page_title="Archive"
+  export page_title="Archive"
   {
     awk -f- -F "\t" "${blog_index}" <<'EOF'
 BEGIN { year=0; }
@@ -69,11 +69,11 @@ blog_prepare_index () {
 }
 
 blog_add_to_index () {
-  case "${path}" in
+  case "${from}" in
     (*/index.md)  ;;
-    (*.md|*.html) printf "%s\t%s\t%s\t%s\n" "$(get_meta "${path}" 2)" \
-        "$(basename "$name")" "$(get_meta "${path}" 1)" \
-        "${path}" >> "${blog_index}" ;;
+    (*.md|*.html) printf "%s\t%s\t%s\t%s\n" "$(get_meta "${from}" 2)" \
+        "$(basename "$name")" "$(get_meta "${from}" 1)" \
+        "${from}" >> "${blog_index}" ;;
   esac
 }
 

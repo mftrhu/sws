@@ -26,7 +26,7 @@ do_hooks () {
   esac
   shift
   for hook in $hooks; do
-    call_ifdef "$hook" "$@"
+    "$hook" "$@"
   done
 }
 
@@ -69,6 +69,11 @@ sws_skip () {
 }
 
 sws_page () {
+  [ -z "$page_title" ] && page_title="$(get_meta "$from" 1)"
+  [ -n "$page_title" ] && title="$page_title" || title="$site_title"
+  [ -n "$page_title" ] && joiner=" - "
+  prefix="${basedir-.}$(dirname "/$from" | sed -e 's|/\w\+|/..|g' -e 's|^/..||g')"
+  
   call_ifdef header
   cat
   call_ifdef footer
@@ -99,10 +104,19 @@ generate () {
   { [ -r "${src}/_config" ] && . "${src}/_config"; } || die "configuration file not found"
   # Load plugins if present
   if [ -d "${src}/${plugins_folder=_plugins}" ]; then
-    find "${src}/${plugins_folder}" -type f -iname "*" | sort | \
+    plugins_list="$(mktemp)"
+    find "${src}/${plugins_folder}" -type f -or -type l -iname "*" | \
+        sort > "${plugins_list}"
+    # Workaround to have the variables updated or created by the loaded
+    # plugins keep living outside the loop.
+    # See <http://heirloom.sourceforge.net/sh/sh.1.html#20>
+    exec 5<&0 <"${plugins_list}"
     while read -r plugin; do
       . "$plugin"
+      export hooks_before hooks_during hooks_after
     done
+    exec <&5 5<&-
+    rm "${plugins_list}"
   fi
   # Load header and footer templates, if present
   [ -r "${src}/${head_tmpl=_header}" ] && source_template "${src}/${head_tmpl}" "header"
@@ -114,12 +128,12 @@ generate () {
   # that should be evaluated by it.
   set -f
   find "$src" ${find_opts_pre} -type f -iname "*" $find_opts_post | \
-  while read -r path; do
+  while read -r from; do
     set +f
-    sws_skip "${path}" && continue
-    sws_handle "${path}"
+    sws_skip "${from}" && continue
+    sws_handle "${from}"
     do_hooks during
-    printf "* %s\n" "${path}"
+    printf "* %s\n" "${from}"
   done
   do_hooks after
 }
