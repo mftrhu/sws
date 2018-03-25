@@ -60,13 +60,13 @@ wiki_init () {
 
 wiki_add_to_index () {
   printf "%s|%s|%s|%s\n" "$(get_meta "${from}" "D")" \
-      "$(basename "$name")" "$(get_meta "${from}" "T")" \
+      "$(basename "${name}")" "$(get_meta "${from}" "T")" \
       "${bare}" >> "${wiki_index}"
 }
 
 wiki_insert_backlinks () {
-  sort "$wiki_index" | while read -r line; do
-    bare="$(printf "$line" | cut -d '|' -sf 4)"
+  sort "${wiki_index}" | while read -r line; do
+    bare="$(printf "%s" "${line}" | cut -d '|' -sf 4)"
     if [ -r "${links_dir}/${bare}" ]; then
       # Turn the list of backlinks into proper links
       sed -i "${links_dir}/${bare}" -e 's|^.*$|<a href="./&.html">&</a>|g'
@@ -93,6 +93,7 @@ EOF
 
 wiki_create_specials () {
   export page_title="All pages"
+  export from="${src}/dummy"
   {
     sort -o "${wiki_index}" -t "|" -k 3,4 "${wiki_index}"
     awk -f- -F "|" "${wiki_index}" <<'EOF'
