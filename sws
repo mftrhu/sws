@@ -87,6 +87,7 @@ sws_markup () {
 sws_handle () {
   name="$(echo "$1" | sed -e 's|^'"${src}"'|'"${dst}"'|g')"
   name="$(echo "$name" | change_ext md html)"
+  bare="$(basename "$name" | sed -e 's/\.html//g')"
   mkdir -p "$(dirname "$name")"
   case "$1" in
     (*.md|*.html) sws_markup "$1" | sws_page > "$name" ;;

@@ -22,10 +22,10 @@ blog_create_archive () {
   export page_title="Archive"
   {
     awk -f- -F "\t" "${blog_index}" <<'EOF'
-BEGIN { year=0; }
+BEGIN { year=9999; }
 {
-  if (substr($1, 1, 4) > year) {
-    if (year != 0) printf("</ul>\n");
+  if (substr($1, 1, 4) < year) {
+    if (year != 9999) printf("</ul>\n");
     year=substr($1, 1, 4);
     printf("<h1>%s</h1>\n<ul>", year);
   }
