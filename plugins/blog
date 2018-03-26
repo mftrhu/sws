@@ -85,10 +85,11 @@ blog_insert_index () {
   # Get the text of the last post that was made
   last_post="$(head -1 "${blog_index}")"
   {
-    printf "<h1>%s</h1>\n" "$(echo "$last_post" | cut -f 3)"
-    printf "<p><time>%s</time> - <a href=\"%s\">Permalink</a></p>\n" \
-           "$(echo "$last_post" | cut -f 1)" \
-           "$(echo "$last_post" | cut -f 2)"
+    printf "<h1><a href=\"./%s\">%s</a></h1>\n" \
+        "$(echo "$last_post" | cut -f 2)" \
+        "$(echo "$last_post" | cut -f 3)"
+    printf "<p><em>Posted on <time>%s</time>.</em></p>\n" \
+        "$(echo "$last_post" | cut -f 1)"
     sws_markup "./$(echo "${last_post}" | cut -f 4)"
   } > "${post_text}"
 
