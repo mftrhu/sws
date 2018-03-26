@@ -31,6 +31,9 @@ do_hooks () {
   done
 }
 
+### Handle premature exits
+trap "exit 2" HUP INT QUIT TERM
+
 ## Templating
 # **Very** simple templating system - lines starting with `%` are passed
 # through, and variables can be embedded with `{{name}}` (also works with

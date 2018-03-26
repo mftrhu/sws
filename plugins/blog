@@ -15,7 +15,6 @@ add_hook during blog_add_to_index
 add_hook after  blog_insert_index
 add_hook after  blog_create_archive
 add_hook after  blog_create_feed
-add_hook after  blog_clean_up_index
 
 
 blog_create_archive () {
@@ -67,6 +66,7 @@ blog_prepare_index () {
   blog_index="$(mktemp)" # Post metadata, tab-separated, one per line
   post_text="$(mktemp)"  # Text of the last published post
   formatted="$(mktemp)"  # Formatted HTML linking at the posts
+  trap 'rm -f "${blog_index}" "${post_text}" "${formatted}" >/dev/null 2>&1' EXIT
 }
 
 blog_add_to_index () {
@@ -111,8 +111,4 @@ a\\
 </ul>
 wq
 EOF
-}
-
-blog_clean_up_index () {
-  rm -f "${blog_index}" "${post_text}" "${formatted}"
 }
