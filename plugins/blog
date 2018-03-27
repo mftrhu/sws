@@ -42,7 +42,7 @@ blog_create_tags () {
   {
     printf "<ul>\n"
     find "${tags_dir}" -type f | sort | while read -r tagfile; do
-      sort -o "${tagfile}" "${tagfile}"
+      sort -r -o "${tagfile}" "${tagfile}"
       tag="$(basename "${tagfile}")"
       printf "<li><a href=\"./tag_%s.html\">%s</a> (%s)</li>\n" \
         "${tag}" "${tag}" "$(uniq "${tagfile}" | wc -l)"
