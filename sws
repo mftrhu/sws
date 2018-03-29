@@ -83,7 +83,7 @@ sws_page () {
 
 sws_markup () {
   grep -v -e '^%' "$1" | case "$1" in
-    (*.md)  "${MARKDOWN-lowdown}" ;;
+    (*.md)  ${MARKDOWN-lowdown} ;;
     (*.html) cat ;;
   esac
 }
