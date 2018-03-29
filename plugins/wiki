@@ -92,8 +92,7 @@ EOF
 }
 
 wiki_create_specials () {
-  export page_title="All pages"
-  export from="${src}/dummy"
+  from="${src}/dummy"
   {
     sort -o "${wiki_index}" -t "|" -k 3,4 "${wiki_index}"
     awk -f- -F "|" "${wiki_index}" <<'EOF'
@@ -104,5 +103,5 @@ BEGIN { print("<ul>"); }
 }
 END { print("</ul>"); }
 EOF
-  } | sws_page > "${dst}/all.html"
+  } | page_title="All pages" bare="all" sws_page > "${dst}/all.html"
 }
