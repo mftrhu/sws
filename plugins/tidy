@@ -1,0 +1,16 @@
+#!/bin/sh
+
+add_hook after  tidy_html
+add_hook after  tidy_css
+
+tidy_html () {
+  find "${dst}" -type f -iname "*.html" | while read -r file; do
+    tidy -i --wrap 0 --tidy-mark no --write-back yes "$file"; \
+  done 2>/dev/null
+}
+
+tidy_css () {
+  find "${dst}" -type f -iname "*.css" | while read -r file; do
+    yuicompressor -o "${file}" "${file}"
+  done 2>/dev/null
+}

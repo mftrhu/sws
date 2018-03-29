@@ -128,9 +128,9 @@ EOF
 
   # Use ed to embed the list of posts and last post
   ed -s "${dst}/index.html" <<EOF
-g/[[LAST]]/d\\
+g/\[\[LAST\]\]/d\\
 .r !cat ${post_text}
-g/[[OLDER]]/d\\
+g/\[\[OLDER\]\]/d\\
 i\\
 <ul>\\
 .\\

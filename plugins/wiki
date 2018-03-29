@@ -72,7 +72,7 @@ wiki_insert_backlinks () {
       sed -i "${links_dir}/${bare}" -e 's|^.*$|<a href="./&.html">&</a>|g'
       # Replace the [[BACKLINKS]] marker with it
       ed -s "${dst}/${bare}.html" <<EOF
-g/[[BACKLINKS]]/d\\
+g/\[\[BACKLINKS\]\]/d\\
 i\\
 <section id="backlinks">\\
 <h2>Backlinks</h2>\\
@@ -86,7 +86,7 @@ wq
 EOF
     else
       # Delete the [[BACKLINKS]] marker
-      printf "g/[[BACKLINKS]]/d\nwq\n" | ed -s "${dst}/${bare}.html"
+      printf "g/\[\[BACKLINKS\]\]/d\nwq\n" | ed -s "${dst}/${bare}.html"
     fi 
   done
 }
