@@ -12,7 +12,7 @@ add_hook after  wiki_create_specials
 echo "= wiki plugin loaded"
 
 sws_markup () {
-  grep -v -e '^%' "$1" | wikify | "${MARKDOWN-lowdown}"
+  grep -v -e '^%' "$1" | wikify | ${MARKDOWN-lowdown}
 }
 
 wikify () {
