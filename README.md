@@ -53,6 +53,7 @@ Conventionally, the following meanings have been assigned to the various letters
 - `%T`: title of the work;
 - `%A`: author;
 - `%D`: date of publication;
+- `%K`: keywords/tags, space-separated;
 - `%X`: summary.
 
 [refer]: https://en.wikipedia.org/wiki/Refer_%28software%29
@@ -129,7 +130,7 @@ Two sample plugins are included in the sws distribution, `blog` and `wiki`.
 
 #### `blog`
 
-A simple weblog plugin, it handles the creation of a chronological archive, tag pages, a RSS feed and of an index page containing the last published article and links to the previous ones.
+A simple weblog plugin, it handles the creation of a chronological archive, a RSS feed and of an index page containing the last published article and links to the previous ones.
 
 It can be minimally configured by setting the `blog_show_older` variable, which defaults to ten and which is the number of items (besides the very last article) that will be linked from the index page.
 
@@ -142,6 +143,10 @@ The syntax for wikilinks is `[[Description|Target]]`, with the description part 
 ---
 
 It overrides `sws_markup`, ignoring HTML files to pipe markdown files into the `wikify` function (a thin wrapper around an Awk script) before getting to the markdown processor.
+
+#### `tags`
+
+Handles the creation of tag pages for a wiki or blog, extracting tag information from the `%K` metadata field, listing pages in reverse chronological order (newer first).  It also sets the `navprefix` to `..` while doing so.
 
 
 ## License
