@@ -14,7 +14,6 @@ add_hook during blog_add_to_index
 
 add_hook after  blog_insert_index
 add_hook after  blog_create_archive
-add_hook after  blog_create_tags
 add_hook after  blog_create_feed
 
 
@@ -35,28 +34,6 @@ BEGIN { year=9999; }
 END { printf("</ul>"); }
 EOF
   } | sws_page > "${dst}/archive.html"
-}
-
-blog_create_tags () {
-  mkdir -p "${dst}/tag"
-  navprefix=".."
-  from="${src}/dummy/dummy"
-  {
-    printf "<ul>\n"
-    find "${tags_dir}" -type f | sort | while read -r tagfile; do
-      sort -r -o "${tagfile}" "${tagfile}"
-      tag="$(basename "${tagfile}")"
-      printf "<li><a href=\"./%s.html\">%s</a> (%s)</li>\n" \
-        "${tag}" "${tag}" "$(uniq "${tagfile}" | wc -l)"
-      {
-        printf "<ul>\n"
-        uniq "${tagfile}" | awk -F "\t" \
-'{ printf("<li><time>%s</time> <a href=\"../%s\">%s</a></li>\n", $1, $2, $3); }'
-        printf "</ul>\n"
-      } | page_title="${tag}" bare="${tag}" sws_page > "${dst}/tag/${tag}.html"
-    done
-    printf "</ul>\n"
-  } | page_title="Tags" bare="tags" sws_page > "${dst}/tag/index.html"
 }
 
 blog_create_feed () {
@@ -88,9 +65,7 @@ blog_prepare_index () {
   blog_index="$(mktemp)"  # Post metadata, tab-separated, one per line
   post_text="$(mktemp)"   # Text of the last published post
   formatted="$(mktemp)"   # Formatted HTML linking at the posts
-  tags_dir="$(mktemp -d)" # Tags temp directory
   trap 'rm -f "${blog_index}" "${post_text}" "${formatted}" >/dev/null 2>&1' EXIT
-  trap 'rm -rf "${tags_dir}" >/dev/null 2>&1' EXIT
 }
 
 blog_add_to_index () {
@@ -101,9 +76,6 @@ blog_add_to_index () {
         "$(basename "${name}")" "$(get_meta "${from}" "T")" \
         "${from}")"
       printf "%s\n" "${infoline}" >> "${blog_index}"
-      for tag in $(get_meta "${from}" "K"); do
-        printf "%s\n" "${infoline}" >> "${tags_dir}/${tag}"
-      done
       ;;
   esac
 }

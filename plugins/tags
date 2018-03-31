@@ -1,0 +1,49 @@
+#!/bin/sh
+# sws plugins to create tag pages
+
+add_hook before tags_prepare
+
+add_hook during tags_add
+
+add_hook after  tags_create
+
+tags_prepare () {
+  tags_dir="$(mktemp -d)" # Tags temp directory
+  trap 'rm -rf "${tags_dir}" >/dev/null 2>&1' EXIT
+}
+
+tags_add () {
+  case "${from}" in
+    (*/index.md)  ;;
+    (*.md|*.html)
+      infoline="$(printf "%s\t%s\t%s\t%s" "$(get_meta "${from}" "D")" \
+        "$(basename "${name}")" "$(get_meta "${from}" "T")" \
+        "${from}")"
+      for tag in $(get_meta "${from}" "K"); do
+        printf "%s\n" "${infoline}" >> "${tags_dir}/${tag}"
+      done
+      ;;
+  esac
+}
+
+tags_create () {
+  mkdir -p "${dst}/tag"
+  navprefix=".."
+  from="${src}/dummy/dummy"
+  {
+    printf "<ul>\n"
+    find "${tags_dir}" -type f | sort | while read -r tagfile; do
+      sort -r -o "${tagfile}" "${tagfile}"
+      tag="$(basename "${tagfile}")"
+      printf "<li><a href=\"./%s.html\">%s</a> (%s)</li>\n" \
+        "${tag}" "${tag}" "$(uniq "${tagfile}" | wc -l)"
+      {
+        printf "<ul>\n"
+        uniq "${tagfile}" | awk -F "\t" \
+'{ printf("<li><time>%s</time> <a href=\"../%s\">%s</a></li>\n", $1, $2, $3); }'
+        printf "</ul>\n"
+      } | page_title="${tag}" bare="${tag}" sws_page > "${dst}/tag/${tag}.html"
+    done
+    printf "</ul>\n"
+  } | page_title="Tags" bare="tags" sws_page > "${dst}/tag/index.html"
+}
