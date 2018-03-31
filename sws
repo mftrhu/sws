@@ -47,7 +47,7 @@ BEGIN { print(name " () {"); }
 !/^%/ { while (match($0, /{{[^}]+}}/)) {
     target = substr($0, RSTART+2, RLENGTH-4);
     print("printf '%s' '" escape(substr($0, 1, RSTART-1)) "'");
-    print("printf '%s' \"$" target "\"");
+    print("printf '%s' \"${" target "}\"");
     $0 = substr($0, RSTART+RLENGTH); }
   print("printf '%s\\n' '" escape($0) "'"); }
 END { print("}"); }

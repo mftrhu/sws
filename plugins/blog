@@ -38,23 +38,25 @@ EOF
 }
 
 blog_create_tags () {
-  from="${src}/dummy"
+  mkdir -p "${dst}/tag"
+  navprefix=".."
+  from="${src}/dummy/dummy"
   {
     printf "<ul>\n"
     find "${tags_dir}" -type f | sort | while read -r tagfile; do
       sort -r -o "${tagfile}" "${tagfile}"
       tag="$(basename "${tagfile}")"
-      printf "<li><a href=\"./tag_%s.html\">%s</a> (%s)</li>\n" \
+      printf "<li><a href=\"./%s.html\">%s</a> (%s)</li>\n" \
         "${tag}" "${tag}" "$(uniq "${tagfile}" | wc -l)"
       {
         printf "<ul>\n"
         uniq "${tagfile}" | awk -F "\t" \
-'{ printf("<li><time>%s</time> <a href=\"%s\">%s</a></li>\n", $1, $2, $3); }'
+'{ printf("<li><time>%s</time> <a href=\"../%s\">%s</a></li>\n", $1, $2, $3); }'
         printf "</ul>\n"
-      } | page_title="${tag}" bare="tag_${tag}" sws_page > "${dst}/tag_${tag}.html"
+      } | page_title="${tag}" bare="${tag}" sws_page > "${dst}/tag/${tag}.html"
     done
     printf "</ul>\n"
-  } | page_title="Tags" bare="tags" sws_page > "${dst}/tags.html"
+  } | page_title="Tags" bare="tags" sws_page > "${dst}/tag/index.html"
 }
 
 blog_create_feed () {

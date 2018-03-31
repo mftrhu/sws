@@ -41,7 +41,7 @@ code==0 {
     if (system("[ -r '"'./${src}/"'" target ".md'"'"' ]") == 0) {
       printf("[%s](./%s.html)", descr, target);
     } else {
-      printf("%s^(?)", descr);
+      printf("%s<sup>?</sup>", descr);
     }
     print(name) >> tmpdir "/" target;
     line = substr(line, cpos);
