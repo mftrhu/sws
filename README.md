@@ -6,7 +6,7 @@ sws fills a niche that didn't really need to be filled: that of static website g
 
 The base script (`sws`) behaves like `sw`, turning a nested folder structure containing markup files into something that can be viewed by a browser, but it can do more than that: it can be templated using a very simple syntax that allows for easy embedding of shell snippets, and sample plugins to handle blogs/simple wikis are included in the distribution.
 
-It does everything with (mostly/hopefully) POSIX-sh-compliant shell scripts, sed, grep, awk and ed.
+It does everything with (mostly/hopefully) POSIX-sh-compliant shell scripts, sed, grep, awk and ed, and less than four hundred lines of code between the core script and plugins. As for the why - I wanted something simple, but not quite as simple as `sw`.
 
 [sw]: https://github.com/jroimartin/sw
 [swx]: https://3hg.fr/swx/swx_en.html
@@ -126,7 +126,7 @@ add_hook PHASE FUNCTION
 
 ### Sample plugins
 
-Two sample plugins are included in the sws distribution, `blog` and `wiki`.
+A few sample plugins are included in the sws distribution.
 
 #### `blog`
 
