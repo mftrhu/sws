@@ -101,8 +101,6 @@ EOF
 
   # Use ed to embed the list of posts and last post
   ed -s "${dst}/index.html" <<EOF
-g/\[\[LAST\]\]/d\\
-.r !cat ${post_text}
 g/\[\[OLDER\]\]/d\\
 i\\
 <ul>\\
@@ -110,6 +108,8 @@ i\\
 .r !tail -n +2 ${formatted} | head -n ${blog_show_older-10}\\
 a\\
 </ul>
+g/\[\[LAST\]\]/d\\
+-r !cat ${post_text}
 wq
 EOF
 }
