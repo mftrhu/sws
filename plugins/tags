@@ -45,5 +45,5 @@ tags_create () {
       } | page_title="${tag}" bare="${tag}" sws_page > "${dst}/tag/${tag}.html"
     done
     printf "</ul>\n"
-  } | page_title="Tags" bare="tags" sws_page > "${dst}/tag/index.html"
+  } | page_title="Tags" bare="index" sws_page > "${dst}/tag/index.html"
 }

@@ -18,8 +18,7 @@ add_hook after  blog_create_feed
 
 
 blog_create_archive () {
-  export page_title="Archive"
-  export from="${src}/dummy"
+  from="${src}/dummy"
   {
     awk -f- -F "\t" "${blog_index}" <<'EOF'
 BEGIN { year=9999; }
@@ -33,7 +32,7 @@ BEGIN { year=9999; }
 }
 END { printf("</ul>"); }
 EOF
-  } | sws_page > "${dst}/archive.html"
+  } | page_title="Archive" bare="archive" sws_page > "${dst}/archive.html"
 }
 
 blog_create_feed () {
