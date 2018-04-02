@@ -89,9 +89,19 @@ blog_insert_index () {
     printf "<h1><a href=\"./%s\">%s</a></h1>\n" \
         "$(echo "$last_post" | cut -f 2)" \
         "$(echo "$last_post" | cut -f 3)"
-    printf "<p><em>Posted on <time>%s</time>.</em></p>\n" \
-        "$(echo "$last_post" | cut -f 1)"
     sws_markup "./$(echo "${last_post}" | cut -f 4)"
+    printf "<div class=\"info\">\n"
+    printf "<div>Posted on <time>%s</time>.</div>\n" \
+            "$(echo "$last_post" | cut -f 1)"
+    page_tags="$(get_meta "./$(echo "${last_post}" | cut -f 4)" "K")"
+    if [ -n "${page_tags}" ]; then
+      printf "<div>\n"
+      for tag in ${page_tags}; do
+        printf "<a href="./tag/%s.html">#%s</a>\n" "${tag}" "${tag}"
+      done
+      printf "</div>\n"
+    fi
+    printf "</div>\n"
   } > "${post_text}"
 
   # Create the list of posts to be embedded in the index
