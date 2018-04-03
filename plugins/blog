@@ -44,11 +44,15 @@ blog_create_feed () {
 <link>${site_address}</link>
 <description>${site_description}</description>
 EOF
+    export -f sws_markup
     awk -f- -v address="${site_address}" -F "\t" "${blog_index}" <<'EOF'
 {
   printf("<item>\n<title>%s</title>\n", $3);
   printf("<link>%s%s</link>\n", address, $2);
-  printf("<description></description>\n");
+  printf("<guid isPermalink=\"true\">%s%s</guid>\n", address, $2);
+  printf("<description><![CDATA[");
+  system("sws_markup " $4);
+  printf("]]></description>\n");
   printf("</item>\n");
 }
 EOF
@@ -90,8 +94,9 @@ blog_insert_index () {
         "$(echo "$last_post" | cut -f 2)" \
         "$(echo "$last_post" | cut -f 3)"
     sws_markup "./$(echo "${last_post}" | cut -f 4)"
+    # Add info chunk
     printf "<div class=\"info\">\n"
-    printf "<div>Posted on <time>%s</time>.</div>\n" \
+    printf "<div>Posted on <time>%s</time></div>\n" \
             "$(echo "$last_post" | cut -f 1)"
     page_tags="$(get_meta "./$(echo "${last_post}" | cut -f 4)" "K")"
     if [ -n "${page_tags}" ]; then
