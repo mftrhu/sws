@@ -75,7 +75,7 @@ wiki_insert_backlinks () {
 g/\[\[BACKLINKS\]\]/d\\
 i\\
 <section id="backlinks">\\
-<h2>Backlinks</h2>\\
+<h1>Backlinks</h1>\\
 <p>\\
 .\\
 .r !cat ${links_dir}/${bare}\\
