@@ -75,9 +75,7 @@ blog_add_to_index () {
   case "${from}" in
     (*/index.md)  ;;
     (*.md|*.html)
-      infoline="$(printf "%s\t%s\t%s\t%s\t%s" "$(get_meta "${from}" "D")" \
-        "$(echo "${name}" | sed 's|'$dst'/||g')" "$(get_meta "${from}" "T")" \
-        "${from}")"
+      infoline="$(get_infoline)"
       printf "%s\n" "${infoline}" >> "${blog_index}"
       ;;
   esac

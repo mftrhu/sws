@@ -16,9 +16,7 @@ tags_add () {
   case "${from}" in
     (*/index.md)  ;;
     (*.md|*.html)
-      infoline="$(printf "%s\t%s\t%s\t%s" "$(get_meta "${from}" "D")" \
-        "$(basename "${name}")" "$(get_meta "${from}" "T")" \
-        "${from}")"
+      infoline="$(get_infoline)"
       for tag in $(get_meta "${from}" "K"); do
         printf "%s\n" "${infoline}" >> "${tags_dir}/${tag}"
       done
