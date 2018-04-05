@@ -6,7 +6,7 @@ sws fills a niche that didn't really need to be filled: that of static website g
 
 The base script (`sws`) behaves like `sw`, turning a nested folder structure containing markup files into something that can be viewed by a browser, but it can do more than that: it can be templated using a very simple syntax that allows for easy embedding of shell snippets, and sample plugins to handle blogs/simple wikis are included in the distribution.
 
-It does everything with (mostly/hopefully) POSIX-sh-compliant shell scripts, sed, grep, awk and ed, and less than four hundred lines of code between the core script and plugins. As for the why - I wanted something simple, but not quite as simple as `sw`.
+It does everything with (mostly/hopefully) POSIX-sh-compliant shell scripts, sed, grep, awk and ed, and less than four hundred lines of code between the core script and plugins. As for the why - I wanted something simple, but not quite as simple as `sw`, and I was in the mood for some shell scripting and wheel re-inventing.
 
 [sw]: https://github.com/jroimartin/sw
 [swx]: https://3hg.fr/swx/swx_en.html
@@ -30,7 +30,7 @@ It does everything with (mostly/hopefully) POSIX-sh-compliant shell scripts, sed
 
 ## Installation
 
-sws does not need to be installed, as it is just a shell script.  It can be copied/symlinked into a directory somewhere in `$PATH`, if wanted.
+sws does not need to be installed.  It can be copied/symlinked into a directory somewhere in `$PATH`, but it'll work just fine by slapping it somewhere Make (or whatever is been used to invoke it) can find it.
 
 
 ## Usage
@@ -63,8 +63,8 @@ Conventionally, the following meanings have been assigned to the various letters
 
 sws can be configured by setting environment variables, either by exporting them or by adding them to the `_config` file of the source directory. It uses the following variables:
 
-- `MARKDOWN`: path to/command to convert markdown source into HTML;
-- `find_opts_pre` and `find_opts_post`: options to be passed to the `find` command tasked with finding all the files to parse inside the source directory;
+- `MARKDOWN`: path to/command to convert markdown source into HTML.
+- `find_opts_pre` and `find_opts_post`: options to be passed to the `find` command tasked with finding all the files to parse inside the source directory.
 - `head_tmpl`, `foot_tmpl` and `plugins_foldr`: paths pointing at the `_header` and `_footer` files, or `_plugins` directory, if they are not contained within the same directory as the `_config` file.
 
 
@@ -147,15 +147,14 @@ It overrides `sws_markup`, ignoring HTML files to pipe markdown files into the `
 
 #### `tags`
 
-Handles the creation of tag pages for a wiki or blog, extracting tag information from the `%K` metadata field, listing pages in reverse chronological order (newer first).
+Handles the creation of tag pages for a wiki or blog, extracting tag information from the `%K` metadata field, listing pages in reverse chronological order (newer first).  These will be put in the`tag` sub-directory.
 
 
 ## License
 
 Copyright (c) 2018 mftrhu <mftrhu+github@inventati.org>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
