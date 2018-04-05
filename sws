@@ -70,11 +70,13 @@ sws_skip () {
 }
 
 sws_page () {
-  [ -z "$page_date" ] && page_date="$(get_meta "$from" "D")"
-  [ -z "$page_title" ] && page_title="$(get_meta "$from" "T")"
+  if [ -z "$special" ]; then
+    [ -z "$page_date" ] && page_date="$(get_meta "$from" "D")"
+    [ -z "$page_title" ] && page_title="$(get_meta "$from" "T")"
+  fi
   [ -n "$page_title" ] && title="$page_title" || title="$site_title"
   [ -n "$page_title" ] && joiner=" - "
-  prefix="${basedir-.}$(dirname "/$from" | sed -e 's|/\w\+|/..|g' -e 's|^/..||g')"
+  prefix="$(dirname "/$from" | sed -e 's|/\w\+|/..|g' -e 's|^/..|.|g')"
   
   call_ifdef header
   cat

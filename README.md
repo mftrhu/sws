@@ -109,6 +109,7 @@ sws will load (source) all the files or symlinks inside the `_plugins` subdirect
 - `from`: the path of the current file being handled.
 - `name`: the path where the file will be put after being processed.
 - `bare`: the basename of the current file/page, minus the extension.
+- `prefix`: relative path leading to the root of the site, used for example to link to CSS and other assets.
 
 
 ### Hooks
@@ -146,7 +147,7 @@ It overrides `sws_markup`, ignoring HTML files to pipe markdown files into the `
 
 #### `tags`
 
-Handles the creation of tag pages for a wiki or blog, extracting tag information from the `%K` metadata field, listing pages in reverse chronological order (newer first).  It also sets the `navprefix` to `..` while doing so.
+Handles the creation of tag pages for a wiki or blog, extracting tag information from the `%K` metadata field, listing pages in reverse chronological order (newer first).
 
 
 ## License

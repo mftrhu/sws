@@ -28,7 +28,6 @@ tags_add () {
 
 tags_create () {
   mkdir -p "${dst}/tag"
-  navprefix=".."
   from="${src}/dummy/dummy"
   {
     printf "<ul>\n"

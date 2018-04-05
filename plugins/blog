@@ -75,8 +75,8 @@ blog_add_to_index () {
   case "${from}" in
     (*/index.md)  ;;
     (*.md|*.html)
-      infoline="$(printf "%s\t%s\t%s\t%s" "$(get_meta "${from}" "D")" \
-        "$(basename "${name}")" "$(get_meta "${from}" "T")" \
+      infoline="$(printf "%s\t%s\t%s\t%s\t%s" "$(get_meta "${from}" "D")" \
+        "$(echo "${name}" | sed 's|'$dst'/||g')" "$(get_meta "${from}" "T")" \
         "${from}")"
       printf "%s\n" "${infoline}" >> "${blog_index}"
       ;;
@@ -84,7 +84,6 @@ blog_add_to_index () {
 }
 
 blog_insert_index () {
-  printf "= inserting the index\n"
   sort -r "${blog_index}" -o "${blog_index}"
 
   # Get the text of the last post that was made
@@ -114,7 +113,7 @@ blog_insert_index () {
 { printf("<li><time>%s</time> <a href=\"%s\">%s</a></li>\n", $1, $2, $3); }
 EOF
 
-  # Use ed to embed the list of posts and last post
+  # Use ed to embed the list of posts and la..st post
   ed -s "${dst}/index.html" <<EOF
 g/\[\[OLDER\]\]/d\\
 i\\
