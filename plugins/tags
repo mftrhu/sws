@@ -27,6 +27,7 @@ tags_add () {
 tags_create () {
   mkdir -p "${dst}/tag"
   from="${src}/dummy/dummy"
+  special=true
   {
     printf "<ul>\n"
     find "${tags_dir}" -type f | sort | while read -r tagfile; do

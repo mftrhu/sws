@@ -91,6 +91,7 @@ EOF
 
 wiki_create_specials () {
   from="${src}/dummy"
+  special=true
   {
     sort -o "${wiki_index}" -t "|" -k 3,4 "${wiki_index}"
     awk -f- -F "|" "${wiki_index}" <<'EOF'

@@ -19,6 +19,7 @@ add_hook after  blog_create_feed
 
 blog_create_archive () {
   from="${src}/dummy"
+  special=true
   {
     awk -f- -F "\t" "${blog_index}" <<'EOF'
 BEGIN { year=9999; }

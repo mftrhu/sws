@@ -63,8 +63,8 @@ get_meta () {
 }
 
 get_infoline () {
-  printf "%s\t%s\t%s\t%s\t%s" "$(get_meta "${from}" "D")" \
-         "$(echo "${name}" | sed 's|'$dst'/||g')" \
+  printf "%s\t%s\t%s\t%s" "$(get_meta "${from}" "D")" \
+         "$(echo "${name}" | sed 's|'"${dst}"'/||g')" \
          "$(get_meta "${from}" "T")" "${from}"
 }
 
