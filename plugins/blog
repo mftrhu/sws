@@ -8,13 +8,13 @@
 #   blog_show_older     How many items to replace `[[OLDER]]` with, last
 #                       post excluded (default: 10).
 
-add_hook before blog_prepare_index
+add_hook pre_site  blog_prepare_index
 
 add_hook during blog_add_to_index
 
-add_hook after  blog_insert_index
-add_hook after  blog_create_archive
-add_hook after  blog_create_feed
+add_hook post_site blog_insert_index
+add_hook post_site blog_create_archive
+add_hook post_site blog_create_feed
 
 
 blog_create_archive () {

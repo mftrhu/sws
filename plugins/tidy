@@ -1,7 +1,7 @@
 #!/bin/sh
 
-add_hook after  tidy_html
-add_hook after  tidy_css
+add_hook post_site tidy_html
+add_hook post_site tidy_css
 
 tidy_html () {
   find "${dst}" -type f -iname "*.html" | while read -r file; do

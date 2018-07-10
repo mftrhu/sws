@@ -13,17 +13,19 @@ change_ext () { sed -e 's/\.'"$1"'$/\.'"$2"'/g'; }
 ## Hooks
 add_hook () {
   case "$1" in
-    (before) hooks_before="$hooks_before $2" ;;
+    (pre_site)  hooks_pre_site="$hooks_pre_site $2" ;;
+    (post_site) hooks_post_site="$hooks_post_site $2" ;;
     (during) hooks_during="$hooks_during $2" ;;
-    (after)  hooks_after="$hooks_after $2" ;;
+    (*) die "registering unknown hooks: '$1'" ;;
   esac
 }
 
 do_hooks () {
   case "$1" in
-    (before) hooks="$hooks_before" ;;
+    (pre_site)  hooks="$hooks_pre_site" ;;
+    (post_site) hooks="$hooks_post_site" ;;
     (during) hooks="$hooks_during" ;;
-    (after)  hooks="$hooks_after" ;;
+    (*) die "calling unknown hooks: '$1'" ;;
   esac
   shift
   for hook in $hooks; do
@@ -127,7 +129,7 @@ generate () {
     exec 5<&0 <"${plugins_list}"
     while read -r plugin; do
       . "$plugin"
-      export hooks_before hooks_during hooks_after
+      export hooks_pre_site hooks_post_site hooks_during
     done
     exec <&5 5<&-
     rm "${plugins_list}"
@@ -138,7 +140,7 @@ generate () {
   # Load navbar template
   [ -r "${src}/${nav_tmpl=_navbar}" ] && source_template "${src}/${nav_tmpl}" "navbar"
   # Go through the source folder
-  do_hooks before
+  do_hooks pre_site
   # Do not touch the `set -f` unless you want to swear up a storm trying
   # to find a way to make variable arguments to find co-exist with blobs
   # that should be evaluated by it.
@@ -151,7 +153,7 @@ generate () {
     do_hooks during
     printf "* %s\n" "${from}"
   done
-  do_hooks after
+  do_hooks post_site
 }
 
 generate "$@"

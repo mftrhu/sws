@@ -1,11 +1,11 @@
 #!/bin/sh
 # sws plugins to create tag pages
 
-add_hook before tags_prepare
+add_hook pre_site  tags_prepare
 
 add_hook during tags_add
 
-add_hook after  tags_create
+add_hook post_site tags_create
 
 tags_prepare () {
   tags_dir="$(mktemp -d)" # Tags temp directory
