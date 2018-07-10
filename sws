@@ -92,6 +92,7 @@ sws_page () {
 sws_markup () {
   grep -v -e '^%' "$1" | case "$1" in
     (*.md)  ${MARKDOWN-lowdown} ;;
+    (*.org) ${ORG_MODE-pandoc -f org} ;;
     (*.html) cat ;;
   esac
 }
@@ -99,11 +100,13 @@ sws_markup () {
 sws_handle () {
   name="$(echo "$1" | sed -e 's|^'"${src}"'|'"${dst}"'|g')"
   name="$(echo "$name" | change_ext md html)"
+  name="$(echo "$name" | change_ext org html)"
   bare="$(basename "$name" | sed -e 's/\.html//g')"
   mkdir -p "$(dirname "$name")"
   case "$1" in
-    (*.md|*.html) sws_markup "$1" | sws_page > "$name" ;;
-    (*)           cp "$1" "$name" ;;
+    (*.md|*.html|*.org)
+        sws_markup "$1" | sws_page > "$name" ;;
+    (*) cp "$1" "$name" ;;
   esac
 }
 
@@ -132,6 +135,8 @@ generate () {
   # Load header and footer templates, if present
   [ -r "${src}/${head_tmpl=_header}" ] && source_template "${src}/${head_tmpl}" "header"
   [ -r "${src}/${foot_tmpl=_footer}" ] && source_template "${src}/${foot_tmpl}" "footer"
+  # Load navbar template
+  [ -r "${src}/${nav_tmpl=_navbar}" ] && source_template "${src}/${nav_tmpl}" "navbar"
   # Go through the source folder
   do_hooks before
   # Do not touch the `set -f` unless you want to swear up a storm trying
