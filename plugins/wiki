@@ -4,7 +4,7 @@
 
 add_hook pre_site  wiki_init
 
-add_hook during wiki_add_to_index
+add_hook post_page wiki_add_to_index
 
 add_hook post_site wiki_insert_backlinks
 add_hook post_site wiki_create_specials

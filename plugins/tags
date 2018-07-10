@@ -3,7 +3,7 @@
 
 add_hook pre_site  tags_prepare
 
-add_hook during tags_add
+add_hook post_page tags_add
 
 add_hook post_site tags_create
 

@@ -15,7 +15,7 @@ add_hook () {
   case "$1" in
     (pre_site)  hooks_pre_site="$hooks_pre_site $2" ;;
     (post_site) hooks_post_site="$hooks_post_site $2" ;;
-    (during) hooks_during="$hooks_during $2" ;;
+    (post_page) hooks_post_page="$hooks_post_page $2" ;;
     (*) die "registering unknown hooks: '$1'" ;;
   esac
 }
@@ -24,7 +24,7 @@ do_hooks () {
   case "$1" in
     (pre_site)  hooks="$hooks_pre_site" ;;
     (post_site) hooks="$hooks_post_site" ;;
-    (during) hooks="$hooks_during" ;;
+    (post_page) hooks="$hooks_post_page" ;;
     (*) die "calling unknown hooks: '$1'" ;;
   esac
   shift
@@ -129,7 +129,7 @@ generate () {
     exec 5<&0 <"${plugins_list}"
     while read -r plugin; do
       . "$plugin"
-      export hooks_pre_site hooks_post_site hooks_during
+      export hooks_pre_site hooks_post_site hooks_pre_page hooks_post_page
     done
     exec <&5 5<&-
     rm "${plugins_list}"
@@ -150,7 +150,7 @@ generate () {
     set +f
     sws_skip "${from}" && continue
     sws_handle "${from}"
-    do_hooks during
+    do_hooks post_page
     printf "* %s\n" "${from}"
   done
   do_hooks post_site
