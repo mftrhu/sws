@@ -114,7 +114,7 @@ sws will load (source) all the files or symlinks inside the `_plugins` subdirect
 
 ### Hooks
 
-Hooks are called in FIFO order, and can be added by using the `add_hook` function to the `before`, `during` or `after` phase.
+Hooks are called in FIFO order, and can be added by using the `add_hook` function to the `pre_site`, `pre_page`, `post_page` and `post_site` phase.
 
 **Syntax:**
 
@@ -122,7 +122,7 @@ Hooks are called in FIFO order, and can be added by using the `add_hook` functio
 add_hook PHASE FUNCTION
 ```
 
-`before` and `after` are executed only once per sws call, immediately before and after processing the files in the source directory.  The `during` hook is called, once for every file, *after* copying the file/creating a page from it.
+`pre_site` and `post_site` are executed only once per sws call, immediately before and after processing the files in the source directory.  The `post_page` hook is called, once for every file, *after* copying the file/creating a page from it.
 
 
 ### Sample plugins
