@@ -1,0 +1,26 @@
+#!/bin/sh
+
+add_hook post_page code_hilite
+
+code_hilite () {
+  case "${from}" in
+    (*.md|*.org|*.html) return ;;
+    (*,v) return ;; # Ignore RCS files
+  esac
+  name="$(echo "${from}" | sed -e 's|^'"${src}"'|'"${dst}"'|g')"
+  name="$(echo "${name}" | change_ext '*' html)"
+  bare="$(basename "${from}")"
+  special=true
+  {
+    printf '<div class="info">\n'
+    printf '[Raw](./%s)\n' "${bare}"
+    if [ -r "${from},v" ]; then
+      printf '[RCS](./%s,v)\n' "${bare}"
+    fi
+    printf '</div>\n\n'
+    printf '```%s\n' "$(echo "${from}" | sed -e 's|.*\.\(.*\)|\1|g')"
+    cat "${from}"
+    printf '```\n'
+  } | pandoc -f markdown -t html | \
+      page_title="${bare}" bare="${bare}" sws_page > "$name"
+}

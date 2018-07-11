@@ -54,6 +54,7 @@ BEGIN { print(name " () {"); }
   print("printf '%s\\n' '" escape($0) "'"); }
 END { print("}"); }
 END_OF_SCRIPT
+  # shellcheck disable=SC1090
   . "${tmpfile}"
   rm -f "${tmpfile}"
 }
@@ -78,6 +79,8 @@ sws_skip () {
 }
 
 sws_page () {
+  # When set, the `special` variable denotes a special page - one whose
+  # content will come not from a file but from a script.
   if [ -z "$special" ]; then
     [ -z "$page_date" ] && page_date="$(get_meta "$from" "D")"
     [ -z "$page_title" ] && page_title="$(get_meta "$from" "T")"
@@ -113,6 +116,7 @@ sws_handle () {
 }
 
 ## Main script
+# shellcheck disable=SC1090
 generate () {
   src="${1:?source folder required}"
   dst="${2:?destination folder required}"

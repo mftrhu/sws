@@ -100,7 +100,7 @@ blog_insert_index () {
     if [ -n "${page_tags}" ]; then
       printf "<div>\n"
       for tag in ${page_tags}; do
-        printf "<a href="./tag/%s.html">#%s</a>\n" "${tag}" "${tag}"
+        printf "<a href=\"./tag/%s.html\">#%s</a>\n" "${tag}" "${tag}"
       done
       printf "</div>\n"
     fi
